@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CodeAlpha - Security Audit Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; }
+
+  header {
+    background: linear-gradient(135deg, #1a1f2e, #0d1b2a);
+    border-bottom: 2px solid #00ff88;
+    padding: 40px;
+    text-align: center;
+  }
+  header h1 { font-size: 2.2rem; color: #00ff88; letter-spacing: 2px; }
+  header p { color: #8892a4; margin-top: 8px; font-size: 0.95rem; }
+
+  .meta {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 24px;
+    background: #161b27;
+    border-bottom: 1px solid #2a2f3e;
+    flex-wrap: wrap;
+  }
+  .meta-item { text-align: center; }
+  .meta-item .label { font-size: 0.75rem; color: #8892a4; text-transform: uppercase; letter-spacing: 1px; }
+  .meta-item .value { font-size: 1.1rem; color: #ffffff; font-weight: 600; margin-top: 4px; }
+
+  .summary {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px 40px;
+    flex-wrap: wrap;
+  }
+  .summary-card {
+    padding: 20px 36px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    min-width: 130px;
+  }
+  .summary-card .slabel { font-size: 0.75rem; font-weight: normal; display: block; margin-top: 4px; letter-spacing: 1px; }
+  .card-critical { background: #2d0a0a; border: 1px solid #ff4444; color: #ff4444; }
+  .card-high     { background: #2d1a0a; border: 1px solid #ff8c00; color: #ff8c00; }
+  .card-medium   { background: #2d2a0a; border: 1px solid #ffd700; color: #ffd700; }
+  .card-total    { background: #0a1f2d; border: 1px solid #00aaff; color: #00aaff; }
+
+  .section-title {
+    font-size: 1.1rem;
+    color: #00ff88;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 20px 40px 10px;
+    border-top: 1px solid #2a2f3e;
+  }
+
+  .vuln-card {
+    margin: 16px 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #2a2f3e;
+  }
+  .vuln-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #161b27;
+  }
+  .badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .badge-critical { background: #ff4444; color: #fff; }
+  .badge-high     { background: #ff8c00; color: #fff; }
+  .badge-medium   { background: #ffd700; color: #000; }
+  .vuln-id   { color: #8892a4; font-size: 0.85rem; }
+  .vuln-name { font-size: 1rem; font-weight: 600; color: #ffffff; }
+
+  .vuln-body { padding: 20px; background: #0f1117; }
+  .vuln-body p { margin-bottom: 10px; font-size: 0.9rem; line-height: 1.6; color: #c0c8d8; }
+  .vuln-body strong { color: #00ff88; }
+
+  .code-block {
+    background: #0a0d14;
+    border-left: 3px solid #ff4444;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: #ff8080;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .fix-block {
+    background: #0a140a;
+    border-left: 3px solid #00ff88;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: #80ff80;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: #8892a4;
+    font-size: 0.85rem;
+    border-top: 1px solid #2a2f3e;
+    margin-top: 40px;
+  }
+  footer span { color: #00ff88; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🛡️ SECURE CODE AUDIT REPORT</h1>
+  <p>CodeAlpha Cybersecurity Internship — Task 3: Secure Coding Review</p>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="label">Target File</div><div class="value">vulnerable_app.py</div></div>
+  <div class="meta-item"><div class="label">Language</div><div class="value">Python / Flask</div></div>
+  <div class="meta-item"><div class="label">Date</div><div class="value">2026-06-16</div></div>
+  <div class="meta-item"><div class="label">Auditor</div><div class="value">CodeAlpha Intern</div></div>
+  <div class="meta-item"><div class="label">Status</div><div class="value" style="color:#ff4444">⚠ Vulnerabilities Found</div></div>
+</div>
+
+<div class="summary">
+  <div class="summary-card card-total">6 <span class="slabel">TOTAL ISSUES</span></div>
+  <div class="summary-card card-critical">2 <span class="slabel">CRITICAL</span></div>
+  <div class="summary-card card-high">3 <span class="slabel">HIGH</span></div>
+  <div class="summary-card card-medium">1 <span class="slabel">MEDIUM</span></div>
+</div>
+
+<div class="section-title">🔍 Vulnerability Findings</div>
+
+<!-- V001 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-critical">CRITICAL</span>
+    <span class="vuln-id">V001</span>
+    <span class="vuln-name">SQL Injection</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> User input is directly embedded into SQL queries using f-strings, allowing attackers to manipulate the query logic.</p>
+    <p><strong>Vulnerable Code (Line 39):</strong></p>
+    <div class="code-block">query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"</div>
+    <p><strong>Attack Example:</strong> Entering <code>' OR '1'='1</code> as username bypasses authentication entirely.</p>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">query = "SELECT * FROM users WHERE username = ? AND password = ?"
+result = conn.execute(query, (username, password)).fetchone()</div>
+  </div>
+</div>
+
+<!-- V002 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-high">HIGH</span>
+    <span class="vuln-id">V002</span>
+    <span class="vuln-name">Hardcoded Credentials</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> Passwords and secret keys are hardcoded directly in the source code. Anyone with access to the code can steal these credentials.</p>
+    <p><strong>Vulnerable Code (Lines 9–12):</strong></p>
+    <div class="code-block">SECRET_KEY = "admin123"
+DB_PASSWORD = "password123"
+ADMIN_PASS = "admin123"</div>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">import os
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+ADMIN_PASS = os.environ.get("ADMIN_PASS")</div>
+  </div>
+</div>
+
+<!-- V003 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-high">HIGH</span>
+    <span class="vuln-id">V003</span>
+    <span class="vuln-name">Weak Hashing Algorithm (MD5)</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> MD5 is cryptographically broken and unsuitable for password hashing. Attackers can reverse MD5 hashes using rainbow tables.</p>
+    <p><strong>Vulnerable Code (Line 16):</strong></p>
+    <div class="code-block">return hashlib.md5(password.encode()).hexdigest()</div>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">import bcrypt
+def hash_password(password):
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+def verify_password(password, hashed):
+    return bcrypt.checkpw(password.encode(), hashed)</div>
+  </div>
+</div>
+
+<!-- V004 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-high">HIGH</span>
+    <span class="vuln-id">V004</span>
+    <span class="vuln-name">Cross-Site Scripting (XSS)</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> User input from the URL is directly injected into HTML output without sanitization, allowing attackers to run malicious JavaScript.</p>
+    <p><strong>Vulnerable Code (Line 52):</strong></p>
+    <div class="code-block">return f"&lt;h2&gt;Search results for: {query}&lt;/h2&gt;"</div>
+    <p><strong>Attack Example:</strong> Visiting <code>/search?q=&lt;script&gt;alert('hacked')&lt;/script&gt;</code> executes JavaScript in the victim's browser.</p>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">from markupsafe import escape
+return f"&lt;h2&gt;Search results for: {escape(query)}&lt;/h2&gt;"</div>
+  </div>
+</div>
+
+<!-- V005 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-critical">CRITICAL</span>
+    <span class="vuln-id">V005</span>
+    <span class="vuln-name">Path Traversal</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> User-controlled filename is used directly in a file path, allowing attackers to read any file on the system.</p>
+    <p><strong>Vulnerable Code (Line 58):</strong></p>
+    <div class="code-block">filepath = os.path.join("uploads", filename)</div>
+    <p><strong>Attack Example:</strong> Requesting <code>/file?name=../../etc/passwd</code> reads the system password file.</p>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">safe_name = os.path.basename(filename)
+filepath = os.path.join("uploads", safe_name)
+if not os.path.exists(filepath):
+    return "File not found", 404</div>
+  </div>
+</div>
+
+<!-- V006 -->
+<div class="vuln-card">
+  <div class="vuln-header">
+    <span class="badge badge-medium">MEDIUM</span>
+    <span class="vuln-id">V006</span>
+    <span class="vuln-name">Debug Mode Enabled in Production</span>
+  </div>
+  <div class="vuln-body">
+    <p><strong>Description:</strong> Flask's debug mode is enabled, which exposes an interactive Python debugger to anyone who triggers an error — giving full server access.</p>
+    <p><strong>Vulnerable Code (Line 75):</strong></p>
+    <div class="code-block">app.run(debug=True)</div>
+    <p><strong>Fixed Code:</strong></p>
+    <div class="fix-block">import os
+app.run(debug=os.environ.get("FLASK_DEBUG", "False") == "True")</div>
+  </div>
+</div>
+
+<footer>
+  <p>Generated by <span>CodeAlpha Secure Code Scanner</span> &nbsp;|&nbsp; Intern Cybersecurity Project &nbsp;|&nbsp; <span>codealpha.tech</span></p>
+</footer>
+
+</body>
+</html>
