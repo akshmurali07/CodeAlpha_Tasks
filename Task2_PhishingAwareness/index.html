@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phishing Awareness Training</title>
+  <style>
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --text: #c9d1d9;
+  --accent: #f85149;
+  --safe: #3fb950;
+  --highlight: #58a6ff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+h1 {
+  text-align: center;
+  color: var(--accent);
+}
+
+h2 {
+  color: var(--highlight);
+}
+
+.section {
+  max-width: 800px;
+  margin: 30px auto;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.email-box {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 15px;
+  font-family: monospace;
+}
+
+.flag {
+  background: rgba(248, 81, 73, 0.2);
+  border-bottom: 2px dashed var(--accent);
+  cursor: pointer;
+}
+
+.flag:hover {
+  background: rgba(248, 81, 73, 0.4);
+}
+
+.explanation {
+  margin-top: 15px;
+  padding: 12px;
+  background: #1c2128;
+  border-left: 4px solid var(--highlight);
+  border-radius: 4px;
+  display: none;
+}
+
+.explanation.show {
+  display: block;
+}
+
+.tactics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.tactic-card {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.tactic-card h3 {
+  color: var(--accent);
+  margin-top: 0;
+}
+
+.practices-list {
+  padding-left: 20px;
+}
+
+.practices-list li {
+  margin-bottom: 10px;
+}
+
+.quiz-question {
+  margin-bottom: 20px;
+}
+
+.quiz-question p {
+  font-weight: bold;
+}
+
+.quiz-options label {
+  display: block;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 6px 0;
+  cursor: pointer;
+}
+
+.quiz-options label:hover {
+  background: #1c2128;
+}
+
+#submit-quiz {
+  background: var(--highlight);
+  color: #0d1117;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#quiz-result {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.correct {
+  border-color: var(--safe) !important;
+  background: rgba(63, 185, 80, 0.15) !important;
+}
+
+.incorrect {
+  border-color: var(--accent) !important;
+  background: rgba(248, 81, 73, 0.15) !important;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Phishing Awareness Training</h1>
+
+  <div class="section">
+    <h2>What is Phishing?</h2>
+    <p>
+      Phishing is a type of cyberattack where attackers impersonate a trusted source
+      (like a bank, company, or coworker) to trick people into revealing sensitive
+      information: passwords, credit card numbers, or personal data, or into
+      installing malware.
+    </p>
+    <p>
+      Phishing usually arrives through email, but can also come via text messages (smishing),
+      phone calls (vishing), or fake websites that look identical to real ones.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Spot the Phish: Example Email</h2>
+    <p>Click on the highlighted parts of this email to see why they're suspicious.</p>
+
+    <div class="email-box">
+      <p><strong>From:</strong> 
+        <span class="flag" onclick="showFlag('sender')">support@paypa1-secure.com</span>
+      </p>
+      <p><strong>Subject:</strong> 
+        <span class="flag" onclick="showFlag('subject')">Urgent: Your account will be suspended in 24 hours!</span>
+      </p>
+      <p>Dear Customer,</p>
+      <p>
+        We noticed unusual activity on your account. To avoid suspension, please verify your
+        details immediately by clicking the link below:
+      </p>
+      <p>
+        <span class="flag" onclick="showFlag('link')">http://paypal-account-verify.com/login</span>
+      </p>
+      <p>
+        <span class="flag" onclick="showFlag('greeting')">Failure to act within 24 hours will result in permanent account closure.</span>
+      </p>
+      <p>Thank you,<br>The Security Team</p>
+    </div>
+
+    <div id="flag-explanation" class="explanation"></div>
+  </div>
+
+  <div class="section">
+    <h2>Common Social Engineering Tactics</h2>
+    <div class="tactics-grid">
+      <div class="tactic-card">
+        <h3>Urgency</h3>
+        <p>Creating a false sense of time pressure ("act now or lose access") so victims don't stop to think.</p>
+      </div>
+      <div class="tactic-card">
+        <h3>Authority</h3>
+        <p>Pretending to be a boss, bank, or government agency to make requests seem legitimate.</p>
+      </div>
+      <div class="tactic-card">
+        <h3>Fear</h3>
+        <p>Threatening consequences like account suspension, legal action, or fines.</p>
+      </div>
+      <div class="tactic-card">
+        <h3>Curiosity / Reward</h3>
+        <p>Offering prizes, refunds, or exciting attachments to lure clicks.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Best Practices to Avoid Phishing</h2>
+    <ul class="practices-list">
+      <li>Always check the sender's email address carefully, not just the display name.</li>
+      <li>Hover over links to preview the real URL before clicking.</li>
+      <li>Be suspicious of urgent or threatening language demanding immediate action.</li>
+      <li>Never share passwords, OTPs, or card details via email or text.</li>
+      <li>If unsure, contact the company directly using official contact details: not info from the email.</li>
+      <li>Enable two-factor authentication (2FA) on your important accounts.</li>
+      <li>Keep your software and browser updated to patch security vulnerabilities.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Quiz: Can You Spot the Phish?</h2>
+    <div id="quiz-container"></div>
+    <button id="submit-quiz" onclick="submitQuiz()">Submit Answers</button>
+    <div id="quiz-result"></div>
+  </div>
+
+  <script>
+    const flagExplanations = {
+      sender: "The sender's email is 'paypa1-secure.com' - notice the '1' instead of an 'l', and it's not PayPal's real domain (paypal.com). Always check the actual domain, not just the display name.",
+      subject: "Urgency and threats ('24 hours', 'suspended') are classic phishing tactics designed to make you panic and act without thinking.",
+      link: "The link doesn't go to paypal.com - it's a fake lookalike domain. Hovering over links (without clicking) lets you check the real destination before trusting it.",
+      greeting: "Phishing emails often use vague greetings and scare tactics about account closure to pressure you into clicking quickly."
+    };
+
+    function showFlag(key) {
+      const explanationBox = document.getElementById('flag-explanation');
+      explanationBox.textContent = flagExplanations[key];
+      explanationBox.classList.add('show');
+    }
+
+    const quizQuestions = [
+      {
+        question: "You receive an email from 'amaz0n-support@delivery-status.net' saying your package is delayed and asking you to click a link to reschedule. What should you do?",
+        options: [
+          "Click the link immediately to fix the delivery",
+          "Check the sender's domain carefully and go to Amazon's website directly instead",
+          "Reply with your order number and address to confirm",
+          "Forward it to friends to warn them"
+        ],
+        correct: 1
+      },
+      {
+        question: "Which of these is the BEST sign that an email might be a phishing attempt?",
+        options: [
+          "It has the company's logo",
+          "It addresses you by your first name",
+          "It creates urgency and threatens negative consequences if you don't act fast",
+          "It was sent during business hours"
+        ],
+        correct: 2
+      },
+      {
+        question: "A coworker emails asking you to urgently buy gift cards and send the codes because they're 'in a meeting and can't talk.' This is an example of:",
+        options: [
+          "Normal workplace request",
+          "Authority and urgency-based social engineering",
+          "A scheduling conflict",
+          "IT department policy"
+        ],
+        correct: 1
+      },
+      {
+        question: "What's the safest way to check if a link in an email is legitimate?",
+        options: [
+          "Click it and see where it goes",
+          "Hover over it (without clicking) to preview the actual URL",
+          "Check if the email looks professional",
+          "Ask the sender to confirm via the same email"
+        ],
+        correct: 1
+      },
+      {
+        question: "You get a call from someone claiming to be from your bank's fraud department, asking you to confirm your password to 'verify your identity.' What should you do?",
+        options: [
+          "Provide the password since it's the bank calling",
+          "Hang up and call the bank directly using the number on your card",
+          "Give a fake password to test them",
+          "Ask them to email you instead"
+        ],
+        correct: 1
+      }
+    ];
+
+    function loadQuiz() {
+      const container = document.getElementById('quiz-container');
+      quizQuestions.forEach((q, i) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'quiz-question';
+
+        const qText = document.createElement('p');
+        qText.textContent = `${i + 1}. ${q.question}`;
+        qDiv.appendChild(qText);
+
+        const optsDiv = document.createElement('div');
+        optsDiv.className = 'quiz-options';
+
+        q.options.forEach((opt, j) => {
+          const label = document.createElement('label');
+          label.id = `q${i}-opt${j}`;
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `question${i}`;
+          input.value = j;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(' ' + opt));
+          optsDiv.appendChild(label);
+        });
+
+        qDiv.appendChild(optsDiv);
+        container.appendChild(qDiv);
+      });
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      quizQuestions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="question${i}"]:checked`);
+        const correctLabel = document.getElementById(`q${i}-opt${q.correct}`);
+        correctLabel.classList.add('correct');
+
+        if (selected) {
+          const selectedLabel = document.getElementById(`q${i}-opt${selected.value}`);
+          if (parseInt(selected.value) === q.correct) {
+            score++;
+          } else {
+            selectedLabel.classList.add('incorrect');
+          }
+        }
+      });
+
+      document.getElementById('quiz-result').textContent =
+        `You scored ${score} out of ${quizQuestions.length}!`;
+    }
+
+    loadQuiz();
+  </script>
+
+</body>
+</html>
