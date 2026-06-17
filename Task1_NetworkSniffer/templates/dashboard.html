@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Network Sniffer Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0e1a;
+      color: #e0e6f0;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(90deg, #0d1b2a, #1a2744);
+      border-bottom: 2px solid #00d4ff;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 22px;
+      color: #00d4ff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    #status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #00ff88;
+    }
+
+    #status .dot {
+      width: 10px;
+      height: 10px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 24px 32px 0;
+    }
+
+    .stat-card {
+      background: #0d1b2a;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .stat-card:hover { border-color: #00d4ff; }
+
+    .stat-card .label {
+      font-size: 11px;
+      color: #6b8caa;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #00d4ff;
+    }
+
+    .stat-card .value.green { color: #00ff88; }
+    .stat-card .value.orange { color: #ffaa00; }
+    .stat-card .value.pink { color: #ff6b9d; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px 32px;
+    }
+
+    .card {
+      background: #0d1b2a;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .card h2 {
+      font-size: 12px;
+      color: #6b8caa;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 10px;
+    }
+
+    canvas { max-height: 220px; }
+
+    .full-width {
+      margin: 0 32px 24px;
+      background: #0d1b2a;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .full-width h2 {
+      font-size: 12px;
+      color: #6b8caa;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      text-align: left;
+      color: #00d4ff;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1e3a5f;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #0f2035;
+      color: #a0b4c8;
+    }
+
+    tr:hover td { background: #112033; color: #e0e6f0; }
+
+    .proto {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .proto-TCP  { background: #003d6b; color: #00d4ff; }
+    .proto-UDP  { background: #1a3a00; color: #00ff88; }
+    .proto-ICMP { background: #3a2000; color: #ffaa00; }
+    .proto-ARP  { background: #3a0030; color: #ff6b9d; }
+    .proto-OTHER{ background: #2a2a2a; color: #888; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Network Sniffer Dashboard</h1>
+  <div id="status"><div class="dot"></div> LIVE CAPTURE</div>
+</header>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="label">Total Packets</div>
+    <div class="value" id="total">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">TCP</div>
+    <div class="value green" id="tcp">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">UDP</div>
+    <div class="value orange" id="udp">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Data Captured</div>
+    <div class="value pink" id="bytes">0 KB</div>
+  </div>
+</div>
+
+<div class="main-grid">
+  <div class="card">
+    <h2>Protocol Distribution</h2>
+    <canvas id="protoChart"></canvas>
+  </div>
+  <div class="card">
+    <h2>Packets Per Second</h2>
+    <canvas id="timeChart"></canvas>
+  </div>
+</div>
+
+<div class="full-width">
+  <h2>Live Packet Feed</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Source IP</th>
+        <th>Destination IP</th>
+        <th>Protocol</th>
+        <th>Size</th>
+        <th>Info</th>
+      </tr>
+    </thead>
+    <tbody id="packetTable"></tbody>
+  </table>
+</div>
+
+<script>
+  const socket = io();
+
+  // Protocol Chart
+  const protoCtx = document.getElementById('protoChart').getContext('2d');
+  const protoChart = new Chart(protoCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['TCP', 'UDP', 'ICMP', 'ARP', 'OTHER'],
+      datasets: [{
+        data: [0, 0, 0, 0, 0],
+        backgroundColor: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b9d', '#555'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#a0b4c8', font: { family: 'Courier New' } } } }
+    }
+  });
+
+  // Time Chart
+  const timeCtx = document.getElementById('timeChart').getContext('2d');
+  const timeChart = new Chart(timeCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Packets/sec',
+        data: [],
+        borderColor: '#00d4ff',
+        backgroundColor: 'rgba(0,212,255,0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      scales: {
+        x: { ticks: { color: '#6b8caa', font: { family: 'Courier New', size: 10 } }, grid: { color: '#0f2035' } },
+        y: { ticks: { color: '#6b8caa', font: { family: 'Courier New', size: 10 } }, grid: { color: '#0f2035' } }
+      },
+      plugins: { legend: { labels: { color: '#a0b4c8' } } }
+    }
+  });
+
+  // Track packets per second
+  let lastTotal = 0;
+  setInterval(() => {
+    const current = parseInt(document.getElementById('total').innerText) || 0;
+    const diff = current - lastTotal;
+    lastTotal = current;
+    const now = new Date().toLocaleTimeString();
+    timeChart.data.labels.push(now);
+    timeChart.data.datasets[0].data.push(diff);
+    if (timeChart.data.labels.length > 20) {
+      timeChart.data.labels.shift();
+      timeChart.data.datasets[0].data.shift();
+    }
+    timeChart.update();
+  }, 1000);
+
+  // Update stats
+  socket.on('stats', (data) => {
+    document.getElementById('total').innerText = data.total;
+    document.getElementById('tcp').innerText = data.tcp;
+    document.getElementById('udp').innerText = data.udp;
+    document.getElementById('bytes').innerText = (data.bytes / 1024).toFixed(1) + ' KB';
+    protoChart.data.datasets[0].data = [data.tcp, data.udp, data.icmp, data.arp, data.other];
+    protoChart.update();
+  });
+
+  // Live packet table
+  socket.on('packet', (p) => {
+    const tbody = document.getElementById('packetTable');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${p.timestamp}</td>
+      <td>${p.source || '-'}</td>
+      <td>${p.destination || '-'}</td>
+      <td><span class="proto proto-${p.protocol}">${p.protocol}</span></td>
+      <td>${p.size} B</td>
+      <td>${p.info || '-'}</td>
+    `;
+    tbody.insertBefore(row, tbody.firstChild);
+    if (tbody.rows.length > 50) tbody.deleteRow(-1);
+  });
+</script>
+</body>
+</html>
